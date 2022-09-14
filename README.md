@@ -1,14 +1,19 @@
-# Project
+#
+<div align=center>
+    <img src="./doc/images/azure_iot_banner.png"></img>
+</div>
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+# Azure IoT Connection Diagnostic Tool
 
-As the maintainer of this project, please make a few updates:
+The Azure IoT Connection Diagnostic Tool enables developers to easily diagnose connection issues between their system and their IoT device.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+### Why Azure IoT?
+
+**[Click here][iot-dev-center]** to learn how Azure IoT can empower the digital transformation of your organization.
+
+### New to Azure IoT Hub?
+
+**[Introduction to Azure IoT Hub:][iot-device-ecosystem]** Follow this guide to learn how to set up an IoT Hub and IoT Hub devices.
 
 ## Contributing
 
