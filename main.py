@@ -95,9 +95,11 @@ def time_check():
     local_dayTime = local.timestamp()
 
     if math.isclose(nist_dayTime, local_dayTime, abs_tol = 300000):
-        print(COLOR["GREEN"], "OK", COLOR["ENDC"] + "- System time is synced properly")
+        print_ok()
+        print("- System time is synced properly")
     else:
-        print(COLOR["RED"], "Failed", COLOR["ENDC"] + "- System time is not synced properly")
+        print_fail()
+        print("- System time is not synced properly")
 
 
 
