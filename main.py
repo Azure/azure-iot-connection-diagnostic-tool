@@ -136,18 +136,29 @@ def internet_check():
             print_ok()
             print("- Device can DNS resolve and reach an outside URL on HTTP port")
             return True
-    except ConnectionError:
-        print_fail()
-        print("- Connection error when attempting to connect with HTTP port")
-        pass
-    except OSError:
-        print_fail()
-        print("- Non-connection OS error when attempting to connect with HTTP port")
-        pass
-    else:
-        print_fail()
-        print("- Non-OS error when attempting to connect with HTTP port")
-        pass
+    except Exception:
+        try:
+            print_warning()
+            print("- First DNS resolution/HTTP port check failed...attempting secondary check")
+            sock.close()
+            
+            sock = socket.create_connection(("www.google.com", 80))
+            if sock is not None:
+                print_ok()
+                print("- Second DNS resolution/HTTP port check succeeded")
+                return True
+        except ConnectionError:
+            print_fail()
+            print("- Secondary check failed: connection error")
+            pass
+        except OSError:
+            print_fail()
+            print("- Secondary check failed: non-connection OS error")
+            pass
+        else:
+            print_fail()
+            print("- Secondary check failed: non-OS error")
+            pass
     finally:
         sock.close()
     return False
