@@ -9,11 +9,11 @@ The Azure IoT Connection Diagnostic Tool enables developers to easily diagnose c
 
 ### Why Azure IoT?
 
-**[Click here][iot-dev-center]** to learn how Azure IoT can empower the digital transformation of your organization.
+**[Click here](https://azure.microsoft.com/en-us/solutions/iot/)** to learn how Azure IoT can empower the digital transformation of your organization.
 
 ### New to Azure IoT Hub?
 
-**[Introduction to Azure IoT Hub:][iot-device-ecosystem]** Follow this guide to learn how to set up an IoT Hub and IoT Hub devices.
+**[Introduction to Azure IoT Hub:](https://github.com/Azure/azure-iot-device-ecosystem/blob/master/setup_iothub.md)** Follow this guide to learn how to set up an IoT Hub and IoT Hub devices.
 
 ## Contributing
 
