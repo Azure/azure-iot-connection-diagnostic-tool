@@ -162,7 +162,7 @@ def time_check():
 
         # Gives the NIST/local time difference in seconds as a string to two decimal places
         time_difference = nist_dayTime - local_dayTime
-        time_difference = time_difference/1000
+        time_difference = time_difference / 1000
         time_difference = str(round(time_difference, 2))
 
         # sets the time difference tolerance to 5 min (set in milliseconds)
