@@ -28,15 +28,15 @@ COLOR = {
 
 def print_ok(message):
     print(COLOR["GREEN"], "OK", COLOR["ENDC"], end = "")
-    print(message)
+    print("- " + message)
     
 def print_fail(message):
     print(COLOR["RED"], "Failed", COLOR["ENDC"], end = "")
-    print(message)
+    print("- " + message)
 
 def print_warning(message):
     print(COLOR["YELLOW"], "Warning", COLOR["ENDC"], end = "")
-    print(message)
+    print("- " + message)
 
 HOST_NAME = "HostName"
 SHARED_ACCESS_KEY_NAME = "SharedAccessKeyName"
@@ -70,32 +70,32 @@ def main():
 
 def platform_check():
     if platform.system() == "Windows":
-        print_ok("- Device operating system is supported (" + platform.system() + ")")
+        print_ok("Device operating system is supported (" + platform.system() + ")")
     elif platform.system() == "Linux":
-        print_ok("- Device operating system is supported (" + platform.system() + ")")
+        print_ok("Device operating system is supported (" + platform.system() + ")")
     elif platform.system() == "Darwin":
         # macOS users may not recognize Darwin, so we display their OS name independently
-        print_ok("- Device operating system is supported (macOS)")
+        print_ok("Device operating system is supported (macOS)")
     else:
         # device may work, even if not explicitly supported
-        print_warning("- Device operating system may not be supported (" + platform.system() + ")")
+        print_warning("Device operating system may not be supported (" + platform.system() + ")")
 
 def validate_conn_str_format(conn_str):
     # this function only validates format, so we're only concerned that all the key components of a connection string are present
     try:
         split_string = conn_str.split(";")
     except (AttributeError, TypeError):
-        print_fail("- Connection string must be of type str")
+        print_fail("Connection string must be of type str")
     try:
         d = dict(arg.split("=", 1) for arg in split_string)
     except ValueError:
-        print_fail("- Connection string cannot be parsed, check for missing arg name or bad syntax")
+        print_fail("Connection string cannot be parsed, check for missing arg name or bad syntax")
     if len(split_string) != len(d):
-        print_fail("- Connection string cannot be parsed, check for duplicate args or bad syntax")
+        print_fail("Connection string cannot be parsed, check for duplicate args or bad syntax")
     if not all(key in valid_keys for key in d.keys()):
-        print_fail("- Invalid key present, check connection string components match with valid_keys")
+        print_fail("Invalid key present, check connection string components match with valid_keys")
     else:
-        print_ok("- Device connection string is properly formatted")
+        print_ok("Device connection string is properly formatted")
         validate_conn_str_args(d)
 
 def validate_conn_str_args(d):
@@ -107,40 +107,40 @@ def validate_conn_str_args(d):
     x509 = d.get(X509)
 
     if shared_access_key and x509:
-        print_fail("- Connection string is invalid due to mixed authentication scheme")
+        print_fail("Connection string is invalid due to mixed authentication scheme")
 
     if host_name and device_id and (shared_access_key or x509):
-        print_ok("- Device connection string components are valid")
+        print_ok("Device connection string components are valid")
         pass
     elif host_name and shared_access_key and shared_access_key_name:
-        print_ok("- Device connection string components are valid")
+        print_ok("Device connection string components are valid")
         pass
     else:
-        print_fail("- Connection string is incomplete")
+        print_fail("Connection string is incomplete")
 
 def internet_check():
     try: 
         sock = socket.create_connection(("1.1.1.1", 80))
         if sock is not None:
-            print_ok("- Device can DNS resolve and reach an outside URL on HTTP port")
+            print_ok("Device can DNS resolve and reach an outside URL on HTTP port")
             return True
     except Exception:
         try:
-            print_warning("- First DNS resolution/HTTP port check failed...attempting secondary check")
+            print_warning("First DNS resolution/HTTP port check failed...attempting secondary check")
             sock.close()
             
             sock = socket.create_connection(("www.google.com", 80))
             if sock is not None:
-                print_ok("- Second DNS resolution/HTTP port check succeeded")
+                print_ok("Second DNS resolution/HTTP port check succeeded")
                 return True
         except ConnectionError:
-            print_fail("- Secondary check failed: connection error")
+            print_fail("Secondary check failed: connection error")
             pass
         except OSError:
-            print_fail("- Secondary check failed: non-connection OS error")
+            print_fail("Secondary check failed: non-connection OS error")
             pass
         else:
-            print_fail("- Secondary check failed: non-OS error")
+            print_fail("Secondary check failed: non-OS error")
             pass
     finally:
         sock.close()
@@ -167,15 +167,15 @@ def time_check():
 
         # sets the time difference tolerance to 5 min (set in milliseconds)
         if math.isclose(nist_dayTime, local_dayTime, abs_tol = 300000):
-            print_ok("- System time is synced properly")
-            print("Time difference between NIST and local time: ")
-            print(time_difference + " seconds")
+            print_ok("System time is synced properly")
         else:
-            print_fail("- System time is not synced properly")
-            print("Time difference (ms) between NIST and local time: ")
-            print(time_difference + " seconds")
+            print_fail("System time is not synced properly")
+
+        print("Time difference (ms) between NIST and local time: ")
+        print(time_difference + " seconds")
+
     except:
-        print_fail("- Could not properly test system time sync")
+        print_fail("Could not properly test system time sync")
     finally:
         sock.close()
 
