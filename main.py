@@ -171,7 +171,7 @@ def time_check():
         else:
             print_fail("System time is not synced properly")
 
-        print("Time difference (ms) between NIST and local time: ")
+        print("Time difference (s) between NIST and local time: ")
         print(time_difference + " seconds")
 
     except:
