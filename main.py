@@ -97,6 +97,7 @@ def validate_conn_str_format(conn_str):
     else:
         print_ok("Device connection string is properly formatted")
         validate_conn_str_args(d)
+        hub_check(d)
 
 def validate_conn_str_args(d):
     # Raise ValueError if incorrect combination of keys in dict d
@@ -118,6 +119,24 @@ def validate_conn_str_args(d):
     else:
         print_fail("Connection string is incomplete")
 
+def hub_check(d):
+    host_name = d.get(HOST_NAME)
+    try: 
+        addrinfo = socket.getaddrinfo(host_name, 443)
+        if addrinfo is not None:
+            print_ok("Device can resolve Hub IP")
+            return True
+    except ConnectionError:
+        print_fail("Hub IP check failed: connection error")
+        pass
+    except OSError:
+        print_fail("Hub IP check failed: non-connection OS error")
+        pass
+    else:
+        print_fail("Hub IP check failed: non-OS error")
+        pass
+    return False
+
 def internet_check():
     try: 
         sock = socket.create_connection(("1.1.1.1", 80))
@@ -129,7 +148,7 @@ def internet_check():
             print_warning("First DNS resolution/HTTP port check failed...attempting secondary check")
             sock.close()
             
-            sock = socket.create_connection(("www.google.com", 80))
+            sock = socket.create_connection(("google.com", 80))
             if sock is not None:
                 print_ok("Second DNS resolution/HTTP port check succeeded")
                 return True
