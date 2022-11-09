@@ -127,8 +127,8 @@ def validate_conn_str_args(d):
 def hub_check(d):
     host_name = d.get(HOST_NAME)
     try: 
-        addrinfo = socket.getaddrinfo(host_name, 443)
-        if addrinfo is not None:
+        sock = socket.create_connection((host_name, 443))
+        if sock is not None:
             print_ok("Device can resolve Hub IP")
             return True
     except ConnectionError:
@@ -140,6 +140,7 @@ def hub_check(d):
     else:
         print_fail("Hub IP check failed: non-OS error")
         pass
+    finally: sock.close()
     return False
 
 def internet_check():
