@@ -11,7 +11,6 @@ import logging
 import socket
 from datetime import datetime, timezone
 import math
-from azure.iot.device.aio import IoTHubDeviceClient
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -59,7 +58,9 @@ valid_keys = [
 ]
 
 def main():
-    conn_str = input("Input connection string: ")
+    conn_str = os.getenv("IOTHUB_DEVICE_CONNECTION_STRING")
+    if conn_str == None:
+        conn_str = input("No connection string environment variable detected. Input connection string: ")
     print()
     print("Connectivity Checks")
     print("-------------------")
