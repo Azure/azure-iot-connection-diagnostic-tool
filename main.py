@@ -9,7 +9,7 @@ import functools
 import platform
 import logging
 import socket
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import math
 
 logging.basicConfig(level=logging.ERROR)
@@ -174,31 +174,36 @@ def internet_check():
 
 def time_check():
     try:
+        # get datetime from NIST
         sock = socket.create_connection(("time.nist.gov", 13))
-
         rawTime = sock.recv(1024)
+    except:
+        print_fail("Could not connect to NIST to test time sync")
+
+    try:
+        # convert to a string and pull out only the needed segments
         dayAndTime = rawTime.decode("utf-8")
         split_dayTime = dayAndTime.split()
         conc_dayTime = split_dayTime[1] + " " + split_dayTime[2]
+
+        # convert to datetime object, make aware of UTC time zone
         dt_dayTime = datetime.strptime(conc_dayTime, "%y-%m-%d %H:%M:%S")
-        nist_dayTime = (dt_dayTime.timestamp())
+        dt_dayTime = dt_dayTime.replace(tzinfo=timezone.utc)
 
+        # take current system time in UTC
         local = datetime.now(timezone.utc)
-        local_dayTime = local.timestamp()
 
-        # Gives the NIST/local time difference in seconds as a string to two decimal places
-        time_difference = nist_dayTime - local_dayTime
-        time_difference = time_difference / 1000
-        time_difference = str(round(time_difference, 2))
+        # get the time difference as a time delta object
+        difference = dt_dayTime - local
 
-        # sets the time difference tolerance to 5 min (set in milliseconds)
-        if math.isclose(nist_dayTime, local_dayTime, abs_tol = 300000):
+        # sets the time difference tolerance to 5 min
+        if difference < timedelta(minutes=5):
             print_ok("System time is synced properly")
         else:
             print_fail("System time is not synced properly")
 
-        print("Time difference (s) between NIST and local time: ")
-        print(time_difference + " seconds")
+        print("Time difference between NIST and local time (HH:MM:SS):")
+        print(difference)
 
     except:
         print_fail("Could not properly test system time sync")
