@@ -4,13 +4,11 @@
 # --------------------------------------------------------------------------
 
 import os
-import inspect
-import functools
 import platform
 import logging
 import socket
 from datetime import datetime, timezone, timedelta
-import math
+from azure.iot.device import IoTHubDeviceClient
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -68,6 +66,7 @@ def main():
     internet_check()
     time_check()
     validate_conn_str(conn_str)
+    client_connect(conn_str)
 
 def platform_check():
     if platform.system() == "Windows":
@@ -210,7 +209,31 @@ def time_check():
     finally:
         sock.close()
 
+def client_connect(conn_str):
+    try:
+        # Create instance of the device client using the connection string
+        device_client = IoTHubDeviceClient.create_from_connection_string(conn_str)
+        print_ok("Device can create an IoT Hub Device Client")
+    except:
+        print_fail("Could not create device client from connection string")
 
+    try:
+        # Connect the device client.
+        device_client.connect()
+        print_ok("Device can connect client to IoT Hub")
+        return True    
+    except ConnectionError:
+        print_fail("Client creation failed: connection error")
+        pass
+    except OSError:
+        print_fail("Client creation failed: non-connection OS error")
+        pass
+    else:
+        print_fail("Client creation failed: non-OS error")
+        pass
+    finally:
+        device_client.shutdown()
+    return False
 
 if __name__ == "__main__":
     main()
