@@ -8,8 +8,8 @@ import platform
 import logging
 import socket
 from datetime import datetime, timezone, timedelta
-from azure.iot.device import IoTHubDeviceClient
 
+# adjust level depending on what level of logging you want to see
 logging.basicConfig(level=logging.ERROR)
 
 # allows colored characters in terminal using ANSI escape sequences
@@ -22,6 +22,12 @@ COLOR = {
     "YELLOW": "\033[93m",
     "ENDC": "\033[0m",
 }
+
+# soft import as users may forget to install necessary packages
+try:
+    from azure.iot.device import IoTHubDeviceClient
+except ImportError:
+    print(COLOR["RED"], "You need to run 'pip install azure-iot-device' first.", COLOR["ENDC"], end = "")
 
 def print_ok(message):
     print(COLOR["GREEN"], "OK", COLOR["ENDC"], end = "")
