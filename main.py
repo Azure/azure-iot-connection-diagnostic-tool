@@ -8,6 +8,7 @@ import platform
 import logging
 import socket
 from datetime import datetime, timezone, timedelta
+from azure.iot.device import exceptions
 
 # adjust level depending on what level of logging you want to see
 logging.basicConfig(level=logging.ERROR)
@@ -28,6 +29,7 @@ try:
     from azure.iot.device import IoTHubDeviceClient
 except ImportError:
     print(COLOR["RED"], "You need to run 'pip install azure-iot-device' first.", COLOR["ENDC"], end = "")
+    raise
 
 def print_ok(message):
     print(COLOR["GREEN"], "OK", COLOR["ENDC"], end = "")
@@ -220,22 +222,27 @@ def client_connect(conn_str):
         # Create instance of the device client using the connection string
         device_client = IoTHubDeviceClient.create_from_connection_string(conn_str)
         print_ok("Device can create an IoT Hub Device Client")
-    except:
-        print_fail("Could not create device client from connection string")
+    except exceptions.ClientError:
+        print_fail("Client creation failed: Could not create device client from connection string")
+        pass
 
     try:
         # Connect the device client.
         device_client.connect()
         print_ok("Device can connect client to IoT Hub")
         return True    
-    except ConnectionError:
-        print_fail("Client creation failed: connection error")
+    except exceptions.ConnectionFailedError:
+        print_fail("Client connection failed: Failed to establish a connection")
         pass
-    except OSError:
-        print_fail("Client creation failed: non-connection OS error")
+    except exceptions.CredentialError:
+        print_fail("Client connection failed: Could not connect client using given credentials")
         pass
+    except exceptions.ConnectionDroppedError:
+        print_fail("Client connection failed: Lost connection while executing operation")
+    except exceptions.NoConnectionError:
+        print_fail("Client connection failed: Operation could not be completed because no connection has been established")
     else:
-        print_fail("Client creation failed: non-OS error")
+        print_fail("Client connection failed: unknown client connection error")
         pass
     finally:
         device_client.shutdown()
