@@ -8,7 +8,6 @@ import platform
 import logging
 import socket
 from datetime import datetime, timezone, timedelta
-from azure.iot.device import exceptions
 
 # adjust level depending on what level of logging you want to see
 logging.basicConfig(level=logging.ERROR)
@@ -27,6 +26,7 @@ COLOR = {
 # soft import as users may forget to install necessary packages
 try:
     from azure.iot.device import IoTHubDeviceClient
+    from azure.iot.device import exceptions
 except ImportError:
     print(COLOR["RED"], "You need to run 'pip install azure-iot-device' first.", COLOR["ENDC"], end = "")
     raise
@@ -124,11 +124,9 @@ def validate_conn_str_args(d):
         print_fail("Connection string is invalid due to mixed authentication scheme")
 
     if host_name and device_id and (shared_access_key or x509):
-        print_ok("Device connection string components are valid")
-        pass
+        print_ok("Device connection string components are valid")        
     elif host_name and shared_access_key and shared_access_key_name:
         print_ok("Device connection string components are valid")
-        pass
     else:
         print_fail("Connection string is incomplete")
 
@@ -141,13 +139,10 @@ def hub_check(d):
             return True
     except ConnectionError:
         print_fail("Hub IP check failed: connection error")
-        pass
     except OSError:
         print_fail("Hub IP check failed: non-connection OS error")
-        pass
     else:
         print_fail("Hub IP check failed: non-OS error")
-        pass
     finally: sock.close()
     return False
 
@@ -168,13 +163,10 @@ def internet_check():
                 return True
         except ConnectionError:
             print_fail("Secondary check failed: connection error")
-            pass
         except OSError:
             print_fail("Secondary check failed: non-connection OS error")
-            pass
         else:
             print_fail("Secondary check failed: non-OS error")
-            pass
     finally:
         sock.close()
     return False
@@ -224,7 +216,6 @@ def client_connect(conn_str):
         print_ok("Device can create an IoT Hub Device Client")
     except exceptions.ClientError:
         print_fail("Client creation failed: Could not create device client from connection string")
-        pass
 
     try:
         # Connect the device client.
@@ -233,17 +224,14 @@ def client_connect(conn_str):
         return True    
     except exceptions.ConnectionFailedError:
         print_fail("Client connection failed: Failed to establish a connection")
-        pass
     except exceptions.CredentialError:
         print_fail("Client connection failed: Could not connect client using given credentials")
-        pass
     except exceptions.ConnectionDroppedError:
         print_fail("Client connection failed: Lost connection while executing operation")
     except exceptions.NoConnectionError:
         print_fail("Client connection failed: Operation could not be completed because no connection has been established")
     else:
         print_fail("Client connection failed: unknown client connection error")
-        pass
     finally:
         device_client.shutdown()
     return False
