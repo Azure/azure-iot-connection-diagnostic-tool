@@ -122,7 +122,6 @@ def validate_conn_str_args(d):
 
     if shared_access_key and x509:
         print_fail("Connection string is invalid due to mixed authentication scheme")
-
     if host_name and device_id and (shared_access_key or x509):
         print_ok("Device connection string components are valid")        
     elif host_name and shared_access_key and shared_access_key_name:
