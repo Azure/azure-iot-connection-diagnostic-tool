@@ -12,7 +12,7 @@ The Azure IoT Connection Diagnostic Tool enables developers to easily diagnose c
 The Azure IoT Device library is available on PyPI, you will need it to fully run the Connection Diagnostic Tool:
 
 ```Shell
-pip install azure-iot-device==3.0.0b2
+pip install azure-iot-device
 ```
 
 Python 3.7 or higher is required in order to use the library
